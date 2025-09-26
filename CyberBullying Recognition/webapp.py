@@ -41,44 +41,49 @@ tweet_input = st.text_area(
     label_visibility="collapsed"
 )
 
+# Add a button to trigger the analysis. Using type="primary" makes it stand out.
+analyze_button = st.button("Analyze Text", type="primary")
+
 # --- Prediction and Output ---
-# This block runs only if the user has entered some text
-if tweet_input:
-    # Add a divider for clear separation between input and output sections
-    st.divider()
+# The analysis now runs only when the 'Analyze Text' button is clicked.
+if analyze_button:
+    # First, check if the user has actually entered any text.
+    if tweet_input:
+        # Add a divider for clear separation between input and output sections
+        st.divider()
 
-    # Perform prediction using the function from functions.py
-    prediction = custom_input_prediction(tweet_input)
+        # Perform prediction using the function from functions.py
+        prediction = custom_input_prediction(tweet_input)
 
-    # A dictionary to map prediction results to their corresponding images
-    image_mapping = {
-        "Age": "images/age_cyberbullying.png",
-        "Ethnicity": "images/ethnicity_cyberbullying.png",
-        "Gender": "images/gender_cyberbullying.png",
-        "Not Cyberbullying": "images/not_cyberbullying.png",
-        "Other Cyberbullying": "images/other_cyberbullying.png",
-        "Religion": "images/religion_cyberbullying.png"
-    }
+        # A dictionary to map prediction results to their corresponding images
+        image_mapping = {
+            "Age": "images/age_cyberbullying.png",
+            "Ethnicity": "images/ethnicity_cyberbullying.png",
+            "Gender": "images/gender_cyberbullying.png",
+            "Not Cyberbullying": "images/not_cyberbullying.png",
+            "Other Cyberbullying": "images/other_cyberbullying.png",
+            "Religion": "images/religion_cyberbullying.png"
+        }
 
-    # Display the prediction result
-    st.subheader("Analysis Result")
-    st.info(f"The tweet is classified as: **{prediction}**")
+        # Display the prediction result
+        st.subheader("Analysis Result")
+        st.info(f"The tweet is classified as: **{prediction}**")
 
-    # Display the corresponding image for the prediction
-    image_path = image_mapping.get(prediction)
-    if image_path:
-        try:
-            result_image = Image.open(image_path)
-            # Add a caption to the result image for better context
-            st.image(result_image, caption=f"Category: {prediction}", use_container_width=True)
-        except FileNotFoundError:
-            st.error(f"Result image not found at '{image_path}'.")
+        # Display the corresponding image for the prediction
+        image_path = image_mapping.get(prediction)
+        if image_path:
+            try:
+                result_image = Image.open(image_path)
+                # Add a caption to the result image for better context
+                st.image(result_image, caption=f"Category: {prediction}", use_container_width=True)
+            except FileNotFoundError:
+                st.error(f"Result image not found at '{image_path}'.")
+        else:
+            st.warning("No result image available for this prediction category.")
     else:
-        st.warning("No result image available for this prediction category.")
+        # If the button is clicked with no text, show a warning.
+        st.warning("Please enter a tweet to analyze.")
 
-else:
-    # A friendly prompt for the user when the input box is empty
-    st.info("Enter a tweet in the text box above to see the analysis.")
 
 st.divider()
 
@@ -87,9 +92,10 @@ with st.expander("About this App"):
     st.markdown("""
         **How does it work?**
         1. You enter the text of a tweet into the input box.
-        2. Our pre-trained machine learning model analyzes the text.
-        3. The model predicts the most likely category of cyberbullying.
-        4. The prediction is displayed along with a corresponding image.
+        2. Click the 'Analyze Text' button.
+        3. Our pre-trained machine learning model analyzes the text.
+        4. The model predicts the most likely category of cyberbullying.
+        5. The prediction is displayed along with a corresponding image.
 
         ***Disclaimer:*** *This application is for demonstration purposes only and should not be used for making real-world decisions.*
         """)
